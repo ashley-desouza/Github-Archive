@@ -1,0 +1,43 @@
+/* top 100 repos by number of pushes */
+SELECT repository_name, count(repository_name) as pushes, repository_owner, repository_language 
+FROM [githubarchive:github.timeline]
+WHERE type='PushEvent'
+GROUP BY repository_name, repository_owner, repository_language
+ORDER BY pushes DESC
+LIMIT 100
+
+/* seekshreyas */
+SELECT repository_name, repository_url, repository_description, repository_created_at, repository_language, 
+repository_private, repository_has_issues, repository_open_issues, repository_forks, repository_homepage, 
+repository_size
+FROM [githubarchive:github.timeline]
+WHERE repository_owner = 'seekshreyas'
+
+/* push events by name and language */
+SELECT repository_name, repository_language, count(repository_language) as pushes
+FROM [githubarchive:github.timeline]
+WHERE type="PushEvent"
+GROUP BY repository_name, repository_language
+ORDER BY pushes DESC
+
+/* push events by language */
+SELECT repository_language, count(repository_language) as pushes
+FROM [githubarchive:github.timeline]
+WHERE type="PushEvent"
+GROUP BY repository_language
+ORDER BY pushes DESC
+
+/* month-by-month count of push events for Repo name = homebrew */
+SELECT LEFT(created_at, 7) as month, COUNT(*) as pushes
+FROM [githubarchive:github.timeline]
+WHERE type='PushEvent' AND repository_name = 'homebrew'
+GROUP BY month
+ORDER BY month DESC
+
+/* day-by-day count of push events for Repo name = homebrew */
+SELECT LEFT(created_at, 10) as day, COUNT(*) as pushes
+FROM [githubarchive:github.timeline]
+WHERE type='PushEvent' AND repository_name = 'homebrew'
+GROUP BY month
+ORDER BY month DESC
+
